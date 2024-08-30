@@ -38,7 +38,7 @@ btns.restart.onclick = () => {
 };
 
 btns.generate.onclick = () => {location.href = location.href.split('#')[0]};
-btns.github.onclick = () => {location.href = 'https://github.com/suhorukovkirilo/sudoku'}
+btns.github.onclick = () => {location.href = window.open('https://github.com/suhorukovkirilo/sudoku')}
 btns.share.onclick = () => {
     let input = popup.querySelector('input');
     popup.classList.add('show');
