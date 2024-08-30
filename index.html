@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Sudoku</title>
+    <script src="Sudoku.js"></script>
+    <script src="GUI.js"></script>
+    <script src="index.js" defer></script>
+</head>
+<body>
+    <h1>Sudoku</h1>
+    <div class="btn-group">
+        <button id="view-solution">Рішення</button>
+        <button id="restart">Почати знову</button>
+        <button id="generate">Нова судоку</button>
+    </div>
+    <div class="btn-group">
+        <button id="share">Поділитися <img src="svg/share.svg" height="24" width="24"></button>
+        <button id="github" style="height: 36px; width: 128px"><img src="svg/github.svg" height="92" width="164"></button>
+    </div>
+    <p class="message">Score: <span id="score">0</span> <span id="message"></span></p>
+    <div class="sudoku" id="sudoku"></div>
+    <div class="numbers"></div>
+    <div class="popup">
+        <div class="screen"></div>
+        <div class="fill"></div>
+        <h2>Поділитися судоку</h2>
+        <p><input readonly><button class="copy">Копіювати посилання</button></p>
+        <p>Поділитися у Telegram: <button class="telegram"><img src="svg/telegram.svg"></button></p>
+        <p>Поділитися у Viber: <button class="viber"><img src="svg/viber.svg"></button></p>
+        <p>Поділитися у Whatsapp: <button class="whatsapp"><img src="svg/whatsapp.svg"></button></p>
+    </div>
+</body>
+</html>

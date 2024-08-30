@@ -1,0 +1,247 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    background-color: #E9F1F7;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    --cell: min(40px, calc(calc(90vw - 28px) / 9));
+}
+
+button {
+    font-family: Arial;
+}
+
+h1 {
+    margin: 0;
+    margin-top: -5%;
+}
+
+.sudoku {
+    margin: 15px;
+    width: calc(3 * calc(3 * var(--cell) + 6px) + 1px);
+    height: calc(3 * calc(3 * var(--cell) + 6px) + 1px);
+    background-color: #F0FFF1;
+    border: 2px solid #122932;
+    border-bottom: 3px solid #122932;
+    position: relative;
+}
+
+.sudoku .row { display: flex }
+
+.sudoku .row div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--cell);
+    width: var(--cell);
+    border: 1px solid #CACFD6;
+    font-family: Arial;
+    font-size: calc(var(--cell) / 2);
+}
+
+.sudoku .row div.updated { animation: updated-cell 2.5s ease }
+.sudoku .row div.wrong:not(.updated) { background-color: lightcoral }
+.sudoku .row div.fixed { cursor: default }
+.sudoku .row div:not(.fixed) { cursor: pointer }
+.sudoku .row:nth-child(3n) { border-bottom: 2px solid #122932 }
+.sudoku .row:nth-child(3n) div { border-bottom: none }
+.sudoku .row div:nth-child(3n) { border-right: 2px solid #122932 }
+.sudoku .row:nth-child(3n + 1) { border-top: 2px solid #122932 }
+.sudoku .row:nth-child(3n + 1) div { border-top: none }
+.sudoku .row div:nth-child(3n + 1) { border-left: 2px solid #122932 }
+
+.sudoku :is(.row:nth-child(1), .row:nth-child(2), .row:nth-child(3), .row:nth-child(7), .row:nth-child(8), .row:nth-child(9)) 
+:is(div:nth-child(4), div:nth-child(5), div:nth-child(6)):not(.updated, .wrong), 
+.sudoku :is(.row:nth-child(4), .row:nth-child(5), .row:nth-child(6)) 
+:is(div:nth-child(1), div:nth-child(2), div:nth-child(3), div:nth-child(7), div:nth-child(8), div:nth-child(9)):not(.updated, .wrong)  {
+    background-color: color-mix(in srgb, #F0FFF1 80%, gray 20%);
+}
+
+.sudoku .line {
+    position: absolute;
+    top: -1.5px;
+    width: 4px;
+    height: calc(100% + 3px);
+    background-color: #122932;
+}
+
+.sudoku .line-1 { left: -2px }
+.sudoku .line-2 { left: calc(3 * var(--cell) + 4px) }
+.sudoku .line-3 { left: calc(6 * var(--cell) + 10px) }
+.sudoku .line-4 { left: calc(9 * var(--cell) + 16px) }
+
+.numbers {
+    margin: 0px 30px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    min-width: calc(3.75 * calc(3 * var(--cell) + 6px) + 5px);
+    position: relative;
+}
+
+.numbers button {
+    font-size: 1.25rem;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 40%;
+    outline: none;
+    border: 2px solid gray;
+}
+
+.numbers button.active { border: 2px solid #6BA368 }
+
+.numbers .arrow {
+    --num: 1;
+    position: absolute;
+    top: 45px;
+    left: calc(24px + 50px * clamp(1, var(--num), 9) - 50px); 
+}
+
+.numbers .arrow .triangle {
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #6BA368;
+}
+
+.numbers .arrow .rectangle {
+    width: 12px;
+    height: 25px;
+    background-color: #6BA368;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-group {
+    height: 50px;
+    width: calc(3 * calc(3 * var(--cell) + 6px) + 1px);
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-group button {
+    border-radius: 10px;
+    padding: 4px 12px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    border-bottom: 3px solid #2274A5;
+    border-right: 3px solid #2274A5;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-group button:hover {
+    border-bottom: 5px solid #2274A5;
+    border-right: 5px solid #2274A5;
+}
+
+.btn-group button:active {
+    border: 3px solid #2274A5;
+}
+
+.popup {
+    visibility: hidden;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: clamp(300px, 60vw, 600px);
+    height: clamp(200px, 40vw, 400px);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgb(255, 255, 255);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    border-radius: 25px;
+    z-index: 100;
+}
+
+.popup.show {
+    visibility: visible;
+}
+
+.popup .screen {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: -50vw;
+    top: -50vh;
+    transform: translateX(clamp(150px, 30vw, 300px)) translateY(clamp(100px, 20vw, 200px));
+    z-index: -10;
+    cursor: pointer;
+    background-color: black;
+    opacity: 0.2;
+}
+
+.popup .fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.popup h2 {
+    text-align: center;
+    font-size: clamp(15px, 3vw, 25px);
+    margin: clamp(10px, 2vw, 20px) 0;
+}
+
+.popup input {
+    width: calc(100% - 250px);
+    border-radius: 5px;
+    border: 1px solid #CACFD6;
+}
+
+.popup p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
+    margin: clamp(5px, 1vw, 16px) 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.popup p:not(:has(.copy)) {
+    justify-content: left;
+    margin-left: 5%;
+    gap: 2%
+}
+
+.popup .copy {
+    border-radius: 15px;
+    padding: 4px 12px;
+    border: 2.5px solid #2274A5;
+    cursor: pointer;
+}
+
+.popup button:not(.copy) {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.popup button img {
+    width: clamp(24px, 5vw, 48px);
+    height: clamp(24px, 5vw, 48px);
+}
+
+@keyframes updated-cell {
+    0% { background-color: green }
+}
